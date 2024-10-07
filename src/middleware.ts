@@ -1,8 +1,17 @@
 import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
 
-//Navigation
-import { AdminNavs, ModeratorNavs } from './Components/Sidebar/data';
+const OnlyAdminNavs = [
+    "/categories",
+    "/writers",
+    "/publisher",
+    "/teacher",
+    "/institution",
+    "/research-paper",
+    "/coupon",
+    "/sales",
+    "/platform-charge"
+];
 
 export async function middleware(req: NextRequest) {
     const response = await fetch(process.env.NEXT_PUBLIC_API_URL as string, {
@@ -34,13 +43,8 @@ export async function middleware(req: NextRequest) {
         return NextResponse.redirect(new URL('/', req.url));
     }
 
-    //I try by removing this code, but getting same issues.
-    const filteredAdminNavs = AdminNavs.filter(adminNav =>
-        !ModeratorNavs.some(moderatorNav => moderatorNav.id === adminNav.id)
-    );
-
     if (pathname !== "/") {
-        if (data?.getProfile.role === "moderator" && filteredAdminNavs.find(a => pathname.startsWith(a.path))) {
+        if (data?.getProfile.role === "moderator" && OnlyAdminNavs.find(a => pathname.startsWith(a))) {
             return NextResponse.redirect(new URL('/', req.url));
         }
     }

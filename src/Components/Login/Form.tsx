@@ -4,13 +4,16 @@ import { useForm, SubmitHandler } from "react-hook-form";
 import toast from "react-hot-toast";
 import { setCookie } from "cookies-next";
 import { Otptimer } from "otp-timer-ts";
+import { useRouter } from "next/navigation";
+import { HttpLink } from "@apollo/client";
+import { setContext } from "@apollo/client/link/context";
 
 //UI
 import { Input, Loading } from "../UI";
 
-//Urql
-import { useMutation } from "@urql/next";
-import { LOGIN_ACCOUNT, VERIFY_OTP } from "@/Urql/query/account/account";
+//Apollo
+import { useMutation } from "@apollo/client";
+import { LOGIN_ACCOUNT, VERIFY_OTP, RESEND_OTP } from "@/Apollo/query/account/account";
 
 //Interface
 interface Inputs {
@@ -22,40 +25,79 @@ const Form = () => {
     //State
     const [send, setSend] = useState<boolean>(false);
 
+    //Initializing Hook
+    const router = useRouter();
+
     //Form
     const {
         register,
         handleSubmit,
         formState: { errors },
+        getValues
     } = useForm<Inputs>();
 
-    //Urql
-    const [{ fetching }, mutate] = useMutation(LOGIN_ACCOUNT);
-    const [{ fetching: verifyFetching }, verifyMutate] = useMutation(VERIFY_OTP);
+    //Apollo
+    const [mutate, { loading }] = useMutation(LOGIN_ACCOUNT, {
+        onCompleted: (data) => {
+            toast.success(data.signup.message)
+            setSend(true);
+        },
+        onError: (error) => {
+            toast.error(error.message)
+        }
+    });
+    const [verifyMutate, { loading: verifyLoading, client }] = useMutation(VERIFY_OTP, {
+        onCompleted: (data) => {
+            toast.success(data?.verifyPhone.message)
+            setCookie("NAOWSbL1sKQ30aq9", data?.verifyPhone.token, {
+                maxAge: 90 * 24 * 60 * 60,
+                sameSite: "lax",
+                path: "/"
+            });
+            const httpLink = new HttpLink({
+                uri: process.env.NEXT_PUBLIC_API_URL,
+                fetchOptions: { cache: "no-store" }
+            });
+            const authLink = setContext((_, { headers }) => {
+                return {
+                    headers: {
+                        ...headers,
+                        authorization: `Bearer ${data.verifyPhone.token}`,
+                    },
+                };
+            });
+            client.setLink(authLink.concat(httpLink));
+            router.push("/");
+        },
+        onError: (error) => {
+            toast.error(error.message)
+        }
+    });
+    const [resendOtp, { loading: resendLoading }] = useMutation(RESEND_OTP, {
+        onCompleted: (data) => {
+            toast.success(data.resendOtp.message);
+        },
+        onError: (error) => {
+            toast.error(error.message);
+        }
+    })
 
     //Handler
     const onSubmit: SubmitHandler<Inputs> = (value) => {
         if (!send) {
-            mutate({ signupInput: { phone: value.phone, as: ["admin", "moderator"] } }).then(({ data, error }) => {
-                if (error) {
-                    toast.error(error.message)
-                } else {
-                    toast.success(data?.signup.message || "")
-                    setSend(true);
+            mutate({
+                variables: {
+                    signupInput: {
+                        phone: value.phone, as: ["admin", "moderator"]
+                    }
                 }
             });
         } else {
-            verifyMutate({ verifyPhoneInput: { phone: value.phone, otp: value.otp } }).then(({ data, error }) => {
-                if (error) {
-                    toast.error(error.message)
-                } else {
-                    toast.success(data?.verifyPhone.message || "")
-                    setCookie("NAOWSbL1sKQ30aq9", data?.verifyPhone.token, {
-                        maxAge: 90 * 24 * 60 * 60,
-                        sameSite: "lax",
-                        path: "/"
-                    });
-                    window.location.reload();
+            verifyMutate({
+                variables: {
+                    verifyPhoneInput: {
+                        phone: value.phone, otp: value.otp
+                    }
                 }
             });
         }
@@ -63,7 +105,7 @@ const Form = () => {
 
     //Handler
     const handleResend = () => {
-
+        resendOtp({ variables: { phone: getValues().phone } });
     }
 
     return (
@@ -105,24 +147,24 @@ const Form = () => {
                     }
                     {send &&
                         <Otptimer
-                            minutes={0}
-                            seconds={5}
+                            minutes={1}
+                            seconds={30}
                             onResend={handleResend}
                             text="Resend code in"
                             buttonText="Resend Code"
                             textClass="font-light text-text"
                             timerClass="font-light text-text"
-                            buttonClass="underline text-main flex gap-2"
+                            buttonClass="underline text-main flex items-center gap-3"
                             showSpinner
-                            fetching={true}
-                            spinnerComponent={<Loading />}
+                            fetching={resendLoading}
+                            spinnerComponent={<Loading size={20} />}
                         />
                     }
                 </div>
                 <div className="mt-5">
-                    <button className="bg-main w-full uppercase font-semibold py-3 text-white rounded-md text-sm relative" type="submit" disabled={(fetching || verifyFetching)}>
-                        <span className={`${(fetching || verifyFetching) && "opacity-20"}`}>{!send ? "Send Code" : "Verify Code"}</span>
-                        {(fetching || verifyFetching) && <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2">
+                    <button className="bg-main w-full uppercase font-semibold py-3 text-white rounded-md text-sm relative" type="submit" disabled={(loading || verifyLoading)}>
+                        <span className={`${(loading || verifyLoading) && "opacity-20"}`}>{!send ? "Send Code" : "Verify Code"}</span>
+                        {(loading || verifyLoading) && <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2">
                             <Loading color="stroke-white" />
                         </div>}
                     </button>

@@ -2,16 +2,15 @@ import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import { cookies } from "next/headers";
 import { Toaster } from "react-hot-toast";
+import { AppProgressBar } from "next-app-progress-bar";
 import "./globals.css";
+import "tippy.js/dist/tippy.css"
 
 //Fonts
 const inter = Inter({ subsets: ["latin"] });
 
-//Urql
-import Provider from "@/Urql/provider";
-
-//NP Provider
-import NpProvider from "@/Progress/NpProvider";
+//Apollo
+import { Provider } from "@/Apollo/provider";
 
 //SEO
 export const metadata: Metadata = {
@@ -25,12 +24,20 @@ const RootLayout = ({ children }: Readonly<{ children: React.ReactNode }>) => {
   return (
     <html lang="en">
       <body className={inter.className}>
-        <NpProvider>
-          <Provider cookie={cookie?.value as string}>
-            <Toaster toastOptions={{ duration: 5000 }} containerStyle={{ zIndex: 9999999 }} />
-            {children}
-          </Provider>
-        </NpProvider>
+        <Provider cookie={cookie?.value as string}>
+          <Toaster
+            toastOptions={{ duration: 5000 }}
+            containerStyle={{ zIndex: 9999999 }}
+          />
+          <AppProgressBar
+            color="#FF9500"
+            height={4}
+            showSpinner={false}
+            zIndex={999999}
+            delay={250}
+          />
+          {children}
+        </Provider>
       </body>
     </html>
   );

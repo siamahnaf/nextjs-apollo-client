@@ -1,10 +1,17 @@
+import Lists from "@/Components/Categories/Lists";
 
+//Default Value
+import { defaultSearch } from "@/Utils/search.default";
 
-const Page = () => {
+//Apollo
+import { PreloadQuery } from "@/Apollo/client";
+import { CATEGORY_LIST } from "@/Apollo/query/category/category";
+
+const Page = async () => {
     return (
-        <div>
-            Category
-        </div>
+        <PreloadQuery query={CATEGORY_LIST} variables={{ searchDto: defaultSearch }}>
+            <Lists />
+        </PreloadQuery>
     );
 };
 

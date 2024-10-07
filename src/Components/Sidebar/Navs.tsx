@@ -3,13 +3,14 @@ import { useState, useMemo, cloneElement } from "react";
 import Link from "next/link";
 import { IoLogOutOutline } from "react-icons/io5";
 import { deleteCookie } from "cookies-next";
+import { useRouter } from "next/navigation";
 
 //Data
 import { AdminNavs, ModeratorNavs } from "./data";
 
-//Urql
-import { useQuery } from "@urql/next";
-import { GET_PROFILE } from "@/Urql/query/account/account";
+//Apollo
+import { useSuspenseQuery } from "@apollo/client";
+import { GET_PROFILE } from "@/Apollo/query/account/account";
 
 //Interface
 interface NavTypes {
@@ -25,11 +26,16 @@ const Navs = () => {
     const [navs, setNavs] = useState<NavTypes[]>([]);
 
     //Urql
-    const [{ data }] = useQuery({ query: GET_PROFILE });
+    const { data, client } = useSuspenseQuery(GET_PROFILE);
 
+    //Initializing Hook
+    const router = useRouter();
+
+    //Handler
     const LogoutHandler = () => {
         deleteCookie("NAOWSbL1sKQ30aq9", { sameSite: "lax", path: "/" })
-        window.location.reload();
+        router.push("/login")
+        client.resetStore();
     }
 
     //Hook

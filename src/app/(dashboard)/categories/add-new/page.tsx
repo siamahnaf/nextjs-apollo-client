@@ -1,10 +1,8 @@
-
+import Add from "@/Components/Categories/Add";
 
 const Page = () => {
     return (
-        <div>
-            Add New
-        </div>
+        <Add />
     );
 };
 

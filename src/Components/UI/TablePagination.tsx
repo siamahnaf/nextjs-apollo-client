@@ -2,15 +2,12 @@
 import { useState, useRef } from "react";
 import { FiChevronLeft, FiChevronRight } from "react-icons/fi";
 
-//Urql
-import { Meta } from "@/Urql/gql/graphql";
-
 //Helpers
 import useOutsideClick from "./outside-click";
 
 //Interface
 interface Props {
-    meta: Meta | null | undefined;
+    meta: any;
     onChange: (e: number) => void;
     onLimitChange: (e: number) => void;
 }

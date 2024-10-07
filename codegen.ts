@@ -2,17 +2,19 @@ import { CodegenConfig } from "@graphql-codegen/cli";
 
 const config: CodegenConfig = {
     schema: "http://localhost:3005/v1/api/pdf",
-    documents: ["src/Urql/**/**/*.ts"],
-    ignoreNoDocuments: true,
+    documents: ["src/Apollo/**/**/*.ts"],
     watch: true,
     generates: {
-        "./src/Urql/gql/": {
+        "./src/Apollo/types/": {
             preset: "client",
             plugins: [],
             config: {
                 scalars: {
                     DateTime: "Date"
                 }
+            },
+            presetConfig: {
+                gqlTagName: "gql"
             }
         }
     }

@@ -32,7 +32,7 @@ const Edit = ({ slug }: Props) => {
         onError: (error) => {
             toast.error(error.message)
         },
-        refetchQueries: ["getCategories"],
+        refetchQueries: ["getCategories", "getCategory"],
         awaitRefetchQueries: true
     });
 

@@ -13,7 +13,7 @@ import { TableHeader, Table, TablePagination, ConfirmDialog } from "@/Components
 import { defaultSearch, SearchInput } from "@/Utils/search.default";
 
 //Apollo
-import { useMutation, useSuspenseQuery } from "@apollo/client";
+import { useMutation, useQuery, useSuspenseQuery } from "@apollo/client";
 import { CATEGORY_LIST, DELETE_CATEGORY } from "@/Apollo/query/category/category";
 
 const Lists = () => {

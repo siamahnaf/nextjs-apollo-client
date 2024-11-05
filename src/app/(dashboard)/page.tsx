@@ -1,8 +1,11 @@
+//Components
+import Analytics from "@/Components/Dashboard/Analytics";
+
 
 const Page = () => {
   return (
     <div>
-      Dashboard
+      <Analytics />
     </div>
   );
 };

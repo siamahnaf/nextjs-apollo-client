@@ -41,3 +41,12 @@ query getProfile {
   }
 }
 `);
+
+
+export const UPDATE_PROFILE = gql(`
+mutation updateProfile($updateUserInput: UpdateUserInput!) {
+  updateProfile(updateUserInput: $updateUserInput) {
+    message
+  }
+}
+`);

@@ -4,7 +4,7 @@ import { useForm, SubmitHandler } from "react-hook-form";
 import toast from "react-hot-toast";
 import { setCookie } from "cookies-next";
 import { Otptimer } from "otp-timer-ts";
-import { useRouter } from "next/navigation";
+import { useRouter } from "next-app-progress-bar";
 import { HttpLink } from "@apollo/client";
 import { setContext } from "@apollo/client/link/context";
 

@@ -1,4 +1,5 @@
 import { TextareaHTMLAttributes, forwardRef } from "react";
+import { PiShieldWarningBold } from "react-icons/pi";
 
 //Interface
 interface Props extends TextareaHTMLAttributes<HTMLTextAreaElement> {
@@ -10,7 +11,7 @@ interface Props extends TextareaHTMLAttributes<HTMLTextAreaElement> {
 
 const Textarea = forwardRef<HTMLTextAreaElement, Props>(({ label, error = false, message = "", id, ...props }, ref) => {
     return (
-        <div className="mb-3">
+        <div className={`${error ? "mb-2" : "mb-0"}`}>
             <label htmlFor={id} className="font-semibold text-gray-500 mb-2 block text-[15px]">{label}</label>
             <div className="relative">
                 <textarea
@@ -20,7 +21,10 @@ const Textarea = forwardRef<HTMLTextAreaElement, Props>(({ label, error = false,
                     {...props}
                 />
             </div>
-            <p className={`text-sm text-red-600 mt-1 transition-all ${error ? "opacity-100 visible -translate-y-0" : "opacity-0 invisible -translate-y-1"}`}>{message}</p>
+            <p className={`text-sm text-red-600 mt-1 flex items-center gap-1 transition-all ${error ? "opacity-100 visible -translate-y-0" : "opacity-0 invisible -translate-y-1"}`}>
+                <PiShieldWarningBold className="text-base -mt-[2px]" />
+                <span>{message}</span>
+            </p>
         </div>
     );
 });

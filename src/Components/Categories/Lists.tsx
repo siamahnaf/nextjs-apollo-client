@@ -13,7 +13,7 @@ import { TableHeader, Table, TablePagination, ConfirmDialog } from "@/Components
 import { defaultSearch, SearchInput } from "@/Utils/search.default";
 
 //Apollo
-import { useMutation, useQuery, useSuspenseQuery } from "@apollo/client";
+import { useMutation, useSuspenseQuery } from "@apollo/client";
 import { CATEGORY_LIST, DELETE_CATEGORY } from "@/Apollo/query/category/category";
 
 const Lists = () => {
@@ -25,10 +25,10 @@ const Lists = () => {
     const [confirm, setConfirm] = useState<number | null>(null);
 
     //Apollo
-    const { data } = useSuspenseQuery(CATEGORY_LIST, { variables: { searchDto: pagination } });
+    const { data } = useSuspenseQuery(CATEGORY_LIST, { variables: { searchDto: pagination }, errorPolicy: "all" });
     const [mutate, { loading }] = useMutation(DELETE_CATEGORY, {
         onCompleted: (data) => {
-            toast.success(data?.deleteCategory.message);
+            toast.success(data.deleteCategory.message);
             setConfirm(null);
         },
         onError: (error) => {
@@ -71,7 +71,7 @@ const Lists = () => {
                 sortingField={["name", "position", "is_top"]}
                 data={data?.getCategories.results || []}
                 search={pagination.search}
-                emptyMessage="Category not created yet!"
+                emptyMessage={`${name} not created yet!`}
             >
                 {({
                     tableData,

@@ -7,7 +7,7 @@ import { defaultSearch } from "@/Utils/search.default";
 import { PreloadQuery } from "@/Apollo/client";
 import { CATEGORY_LIST } from "@/Apollo/query/category/category";
 
-const Page = async () => {
+const Page = () => {
     return (
         <PreloadQuery query={CATEGORY_LIST} variables={{ searchDto: defaultSearch }}>
             <Lists />

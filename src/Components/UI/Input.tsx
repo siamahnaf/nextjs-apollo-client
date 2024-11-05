@@ -13,7 +13,7 @@ interface Props extends InputHTMLAttributes<HTMLInputElement> {
 
 const Input = forwardRef<HTMLInputElement, Props>(({ label, error = false, message = "", id, prefixElement, className, ...rest }, ref) => {
     return (
-        <div>
+        <div className={`${error ? "mb-2" : "mb-0"}`}>
             <label htmlFor={id} className="font-semibold text-gray-500 mb-2 block text-[15px]">{label}</label>
             <div className="relative">
                 <input

@@ -4,7 +4,7 @@ import { cookies } from "next/headers";
 import { Toaster } from "react-hot-toast";
 import { AppProgressBar } from "next-app-progress-bar";
 import "./globals.css";
-import "tippy.js/dist/tippy.css"
+import "tippy.js/dist/tippy.css";
 
 //Fonts
 const inter = Inter({ subsets: ["latin"] });

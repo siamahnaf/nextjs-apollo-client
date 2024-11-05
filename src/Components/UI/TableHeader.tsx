@@ -15,7 +15,7 @@ interface Props {
     onChange: (e: string) => void;
 }
 
-const TableHeader = ({ name, placeholder, path, data, headers, onChange }: Props) => {
+const TableHeader = ({ name, placeholder, path, data = [], headers, onChange }: Props) => {
     return (
         <div className="flex gap-4 items-center mb-6">
             <h4 className="flex-1 text-2xl font-medium text-gray-700">

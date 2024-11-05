@@ -4,6 +4,7 @@ import ImageUploading, { ImageListType } from "react-images-uploading";
 import Image from "next/image";
 import { RiDeleteBin6Line } from "react-icons/ri";
 import { ReactS3Client } from "react-s3-typescript";
+import { PiShieldWarningBold } from "react-icons/pi";
 
 //S3 config
 import { s3Config } from "@/Utils/s3.config";
@@ -58,6 +59,10 @@ const ImageUploader = ({ label = "Image", sub = "Add or change image for the ite
     const onImageDelete = async () => {
         setImage([])
         onChange("")
+        if (value) {
+            const s3 = new ReactS3Client(s3Config);
+            await s3.deleteFile(value);
+        }
     }
 
     useEffect(() => {
@@ -154,7 +159,10 @@ const ImageUploader = ({ label = "Image", sub = "Add or change image for the ite
                                     }
                                 </div>
                             }
-                            <p className={`text-sm text-red-600 mt-1 transition-all ${error ? "opacity-100 visible -translate-y-0" : "opacity-0 invisible -translate-y-1"}`}>{message}</p>
+                            <p className={`text-sm text-red-600 mt-1 flex items-center gap-1 transition-all ${error ? "opacity-100 visible -translate-y-0" : "opacity-0 invisible -translate-y-1"}`}>
+                                <PiShieldWarningBold className="text-base -mt-[2px]" />
+                                <span>{message}</span>
+                            </p>
                             <p className={`text-sm text-red-600 mt-1 transition-all ${uploadError ? "opacity-100 visible -translate-y-0" : "opacity-0 invisible -translate-y-1"}`}>a{uploadError}</p>
                             {errors &&
                                 <ul className="mt-3 ml-1">

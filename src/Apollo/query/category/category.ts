@@ -44,8 +44,10 @@ query getCategory($slug: String!) {
   getCategory(slug: $slug) {
     id
     name
+    en_name
     description
     icon
+    vertical_product_style
     position
     is_top
   }
